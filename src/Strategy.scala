@@ -1,46 +1,36 @@
-trait Strategy {
-  def run() {
-    method()
+class Parser {
+  def parse() {
+    println("Domyslny parser")
   }
 
-  def method()
-}
+  def chooseStrategy(filename: String): Parser = {
+    val extension = filename.split(".")(1)
 
-class DefaultStrategy extends Strategy {
-  override def method() {
-    println("Podstawowa strategia")
-  }
-}
-
-class StrategyA extends Strategy {
-  override def method() {
-    println("Strategia A")
+    extension match {
+      case "json" => return new JsonParser()
+      case "cvs" => return new CVSParser()
+      case _ => return new Parser()
+    }
   }
 }
 
-class StrategyB extends Strategy {
-  override def method() {
-    println("Strategia B")
+class JsonParser extends Parser {
+  override def parse() {
+    println("Parsowanie jsona")
   }
 }
 
-class TestApp(var strategy: Strategy) {
-  def doSomething() {
-    strategy.run()
+class CVSParser extends Parser {
+  override def parse() {
+    println("Parsowanie cvs")
   }
 }
 
-object StrategyClient {
-  var arg = "A"
-  var strategy: Strategy = _
-  arg match {
-    case "A" => strategy = new StrategyA()
-    case "B" => strategy = new StrategyB()
-    case _ => strategy = new DefaultStrategy()
+object Application {
+  def main(args: Array[String]) = {
+    val filename = args(0)
+    val parser = new Parser().chooseStrategy(filename)
+    parser.parse()
   }
-  var testApp = new TestApp(strategy)
-  testApp.doSomething()
-  testApp.strategy = new StrategyB()
-  testApp.doSomething()
 }
 
